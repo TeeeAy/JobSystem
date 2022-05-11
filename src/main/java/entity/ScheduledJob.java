@@ -1,6 +1,7 @@
 package entity;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +12,7 @@ import java.time.ZoneOffset;
 
 @Getter
 @SuperBuilder(setterPrefix = "with", toBuilder = true)
+@EqualsAndHashCode(callSuper = true, exclude = "lastExecutionTimeStamp")
 public class ScheduledJob extends Job {
 
     @Builder.Default

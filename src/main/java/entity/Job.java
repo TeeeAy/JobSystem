@@ -1,9 +1,6 @@
 package entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Getter
 @SuperBuilder(setterPrefix = "with", toBuilder = true)
+@EqualsAndHashCode
 public abstract class Job implements Runnable {
 
     @Setter

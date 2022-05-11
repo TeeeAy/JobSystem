@@ -7,6 +7,7 @@ import entity.State;
 import lombok.NoArgsConstructor;
 import transformer.OneTimeJobTransformer;
 
+import java.util.Calendar;
 import java.util.concurrent.Future;
 
 @NoArgsConstructor
@@ -32,7 +33,7 @@ public class OneTimeJobExecutor extends JobExecutor<OneTimeJobInfo>{
 
     public void cancelJobById(String jobId) {
         Job job = jobDao.getJobById(jobId);
-        if (job.getState() == State.FINISHED) {
+        if (job.getState() == State.FINISHED || job.getState() == State.CANCELLED) {
             throw new JobCancellationException();
         }
         job.getFuture().cancel(true);

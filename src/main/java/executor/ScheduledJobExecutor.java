@@ -36,6 +36,9 @@ public class ScheduledJobExecutor extends JobExecutor<ScheduledJobInfo>{
     @Override
     public void cancelJobById(String jobId) {
         Job job = jobDao.getJobById(jobId);
+        if (job.getState() == State.CANCELLED) {
+            throw new JobCancellationException();
+        }
         job.getFuture().cancel(true);
         job.setState(State.CANCELLED);
     }

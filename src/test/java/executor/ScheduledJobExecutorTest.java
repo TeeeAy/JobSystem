@@ -3,6 +3,7 @@ package executor;
 import dao.JobDao;
 import dto.ScheduledJobInfo;
 import entity.Job;
+import entity.OneTimeJob;
 import entity.ScheduledJob;
 import entity.State;
 import executor.ScheduledJobExecutor;
@@ -18,7 +19,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
@@ -55,6 +56,7 @@ public class ScheduledJobExecutorTest {
 
         jobExecutor.executeJob(scheduledJobInfo);
         assertEquals(State.PENDING, job.getState());
+        assertEquals(future, job.getFuture());
 
         then(jobDao).should(only()).saveJob(job);
         then(jobTransformer).should(only()).transform(scheduledJobInfo);
@@ -72,6 +74,22 @@ public class ScheduledJobExecutorTest {
         assertEquals(State.CANCELLED, job.getState());
 
         then(jobDao).should(times(1)).getJobById(job.getJobId());
+    }
+
+
+    @Test
+    void shouldThrowJobCancellationExceptionOnCancelledJob() {
+        int seconds = 4;
+        ScheduledJob job = new ScheduledJob("jobType1", seconds, 70);
+        job.setState(State.CANCELLED);
+        given(jobDao.getJobById(job.getJobId())).willReturn(job);
+        JobCancellationException jobCancellationException =
+                assertThrows(JobCancellationException.class,
+                        () -> jobExecutor.cancelJobById(job.getJobId()));
+        assertTrue(jobCancellationException
+                .getMessage()
+                .contains(JobCancellationException.DEFAULT_CANCELLATION_ERROR_MESSAGE));
+        then(jobDao).should(only()).getJobById(job.getJobId());
     }
 
 }
