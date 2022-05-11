@@ -12,5 +12,46 @@
         <maven.compiler.source>15</maven.compiler.source>
         <maven.compiler.target>15</maven.compiler.target>
     </properties>
-    
+
+         <dependencies>
+            <!-- Lombok -->
+            <dependency>
+            	<groupId>org.projectlombok</groupId>
+            	<artifactId>lombok</artifactId>
+            	<version>1.18.24</version>
+            	<scope>provided</scope>
+            </dependency>
+            <!-- Log -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <!-- Test -->
+            <dependency>
+               <groupId>edu.umd.cs.mtc</groupId>
+               <artifactId>multithreadedtc</artifactId>
+               <version>1.01</version>
+            </dependency>
+            <dependency>
+               <groupId>org.junit.jupiter</groupId>
+               <artifactId>junit-jupiter-engine</artifactId>
+               <version>5.4.0</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+               <groupId>junit</groupId>
+               <artifactId>junit</artifactId>
+               <version>4.12</version>
+               <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>3.2.4</version>
+                <scope>test</scope>
+            </dependency>
+         </dependencies>
+
+
 </project>
