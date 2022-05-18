@@ -22,8 +22,8 @@ public class ScheduledJob extends Job {
 
     private final Integer repetitionPeriod;
 
-    public ScheduledJob(String jobType, Integer secondsToExecute, Integer repetitionPeriod) {
-        super(jobType, secondsToExecute);
+    public ScheduledJob(String jobType, Runnable task, Integer repetitionPeriod) {
+        super(jobType, task);
         this.repetitionPeriod = repetitionPeriod;
     }
 

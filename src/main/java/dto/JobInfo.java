@@ -12,6 +12,6 @@ public abstract class JobInfo {
 
     private String jobType;
 
-    private Integer secondsToExecute;
+    private Runnable task;
 
 }

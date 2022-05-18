@@ -30,7 +30,7 @@ public class ScheduledJobExecutorTest {
         int seconds = 2;
         ScheduledJobInfo scheduledJobInfo = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .withRepetitionPeriod(70)
                 .build();
         Job job = jobExecutor.executeJob(scheduledJobInfo);
@@ -44,12 +44,12 @@ public class ScheduledJobExecutorTest {
         int seconds = 6;
         ScheduledJobInfo scheduledJobInfo1 = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .withRepetitionPeriod(70)
                 .build();
         ScheduledJobInfo scheduledJobInfo2 = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .withRepetitionPeriod(70)
                 .build();
         Job job1 = jobExecutor.executeJob(scheduledJobInfo1);
@@ -66,17 +66,17 @@ public class ScheduledJobExecutorTest {
         int seconds = 6;
         ScheduledJobInfo scheduledJobInfo1 = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .withRepetitionPeriod(70)
                 .build();
         ScheduledJobInfo scheduledJobInfo2 = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .withRepetitionPeriod(70)
                 .build();
         ScheduledJobInfo waitingJobInfo = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .withRepetitionPeriod(70)
                 .build();
         jobExecutor.executeJob(scheduledJobInfo1);
@@ -94,7 +94,7 @@ public class ScheduledJobExecutorTest {
         int seconds = 2;
         ScheduledJobInfo scheduledJobInfo = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .withRepetitionPeriod(70)
                 .build();
         Job scheduledJob = jobExecutor.executeJob(scheduledJobInfo);
@@ -111,8 +111,8 @@ public class ScheduledJobExecutorTest {
     private static void sleep(int seconds) {
         try {
             Thread.sleep(TimeUnit.SECONDS.toMillis(seconds));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
+
         }
     }
 }

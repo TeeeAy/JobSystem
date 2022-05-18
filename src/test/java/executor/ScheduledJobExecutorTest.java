@@ -2,11 +2,9 @@ package executor;
 
 import dao.JobDao;
 import dto.ScheduledJobInfo;
-import entity.Job;
-import entity.OneTimeJob;
 import entity.ScheduledJob;
 import entity.State;
-import executor.ScheduledJobExecutor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +23,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Slf4j
 public class ScheduledJobExecutorTest {
 
     @Mock
@@ -40,15 +39,19 @@ public class ScheduledJobExecutorTest {
     ScheduledJobExecutor jobExecutor;
 
 
-   @Test
+    @Test
     void shouldExecuteJob() {
-        int seconds = 2;
+        Runnable runnable = () -> log.info("Test shouldExecuteJob");
         ScheduledJobInfo scheduledJobInfo = ScheduledJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(runnable)
                 .withRepetitionPeriod(70)
                 .build();
-        ScheduledJob job = new ScheduledJob("jobType1", 10, 70);
+        ScheduledJob job = ScheduledJob.builder()
+                .withJobType("jobType1")
+                .withTask(runnable)
+                .withRepetitionPeriod(70)
+                .build();
         ScheduledFuture<?> future = mock(ScheduledFuture.class);
         given(jobTransformer.transform(scheduledJobInfo)).willReturn(job);
         doReturn(future).when(scheduledThreadPoolExecutor).scheduleAtFixedRate(job, 0,
@@ -66,7 +69,12 @@ public class ScheduledJobExecutorTest {
 
     @Test
     void shouldCancelJob() {
-        Job job = new ScheduledJob("jobType1", 10, 70);
+        Runnable runnable = () -> log.info("Test shouldCancelJob");
+        ScheduledJob job = ScheduledJob.builder()
+                .withJobType("jobType1")
+                .withTask(runnable)
+                .withRepetitionPeriod(70)
+                .build();
         job.setFuture(mock(Future.class));
         given(jobDao.getJobById(job.getJobId())).willReturn(job);
 
@@ -79,8 +87,12 @@ public class ScheduledJobExecutorTest {
 
     @Test
     void shouldThrowJobCancellationExceptionOnCancelledJob() {
-        int seconds = 4;
-        ScheduledJob job = new ScheduledJob("jobType1", seconds, 70);
+        Runnable runnable = () -> log.info("Test shouldThrowJobCancellationExceptionOnCancelledJob");
+        ScheduledJob job = ScheduledJob.builder()
+                .withJobType("jobType1")
+                .withTask(runnable)
+                .withRepetitionPeriod(70)
+                .build();
         job.setState(State.CANCELLED);
         given(jobDao.getJobById(job.getJobId())).willReturn(job);
         JobCancellationException jobCancellationException =

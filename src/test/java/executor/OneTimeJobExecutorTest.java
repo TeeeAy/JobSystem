@@ -4,6 +4,7 @@ import dao.JobDao;
 import dto.OneTimeJobInfo;
 import entity.OneTimeJob;
 import entity.State;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Slf4j
 public class OneTimeJobExecutorTest {
 
     @Mock
@@ -37,69 +39,82 @@ public class OneTimeJobExecutorTest {
 
     @Test
     void shouldExecuteJob() {
-        int seconds = 2;
+        Runnable runnable = () -> log.info("Test shouldExecuteJob");
         OneTimeJobInfo oneTimeJobInfo = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(runnable)
                 .build();
-        OneTimeJob job = new OneTimeJob("jobType1", seconds);
+        OneTimeJob oneTimeJob = OneTimeJob.builder()
+                .withJobType("jobType1")
+                .withTask(runnable)
+                .build();
         ScheduledFuture<?> future = mock(ScheduledFuture.class);
-        given(jobTransformer.transform(oneTimeJobInfo)).willReturn(job);
-        doReturn(future).when(scheduledThreadPoolExecutor).submit(job);
+        given(jobTransformer.transform(oneTimeJobInfo)).willReturn(oneTimeJob);
+        doReturn(future).when(scheduledThreadPoolExecutor).submit(oneTimeJob);
 
         jobExecutor.executeJob(oneTimeJobInfo);
-        assertEquals(State.PENDING, job.getState());
-        assertEquals(future, job.getFuture());
+        assertEquals(State.PENDING, oneTimeJob.getState());
+        assertEquals(future, oneTimeJob.getFuture());
 
-        then(jobDao).should(only()).saveJob(job);
+        then(jobDao).should(only()).saveJob(oneTimeJob);
         then(jobTransformer).should(only()).transform(oneTimeJobInfo);
-        then(scheduledThreadPoolExecutor).should(only()).submit(job);
+        then(scheduledThreadPoolExecutor).should(only()).submit(oneTimeJob);
     }
 
 
 
     @Test
     void shouldThrowJobCancellationExceptionOnFinishedJob() {
-        int seconds = 4;
-        OneTimeJob job = new OneTimeJob("jobType1", seconds);
-        job.setState(State.FINISHED);
-        given(jobDao.getJobById(job.getJobId())).willReturn(job);
+        Runnable runnable = () -> log.info("Test shouldThrowJobCancellationExceptionOnFinishedJob");
+        OneTimeJob oneTimeJob = OneTimeJob.builder()
+                .withJobType("jobType1")
+                .withTask(runnable)
+                .build();
+        oneTimeJob.setState(State.FINISHED);
+        given(jobDao.getJobById(oneTimeJob.getJobId())).willReturn(oneTimeJob);
         JobCancellationException jobCancellationException =
                 assertThrows(JobCancellationException.class,
-                        () -> jobExecutor.cancelJobById(job.getJobId()));
+                        () -> jobExecutor.cancelJobById(oneTimeJob.getJobId()));
         assertTrue(jobCancellationException
                 .getMessage()
                 .contains(JobCancellationException.DEFAULT_CANCELLATION_ERROR_MESSAGE));
-        then(jobDao).should(only()).getJobById(job.getJobId());
+        then(jobDao).should(only()).getJobById(oneTimeJob.getJobId());
     }
 
 
     @Test
     void shouldThrowJobCancellationExceptionOnCancelledJob() {
-        int seconds = 4;
-        OneTimeJob job = new OneTimeJob("jobType1", seconds);
-        job.setState(State.CANCELLED);
-        given(jobDao.getJobById(job.getJobId())).willReturn(job);
+        Runnable runnable = () -> log.info("Test shouldThrowJobCancellationExceptionOnCancelledJob");
+        OneTimeJob oneTimeJob = OneTimeJob.builder()
+                .withJobType("jobType1")
+                .withTask(runnable)
+                .build();
+        oneTimeJob.setState(State.CANCELLED);
+        given(jobDao.getJobById(oneTimeJob.getJobId())).willReturn(oneTimeJob);
         JobCancellationException jobCancellationException =
                 assertThrows(JobCancellationException.class,
-                        () -> jobExecutor.cancelJobById(job.getJobId()));
+                        () -> jobExecutor.cancelJobById(oneTimeJob.getJobId()));
         assertTrue(jobCancellationException
                 .getMessage()
                 .contains(JobCancellationException.DEFAULT_CANCELLATION_ERROR_MESSAGE));
-        then(jobDao).should(only()).getJobById(job.getJobId());
+        then(jobDao).should(only()).getJobById(oneTimeJob.getJobId());
     }
 
 
     @Test
     void shouldCancelJob() {
-        int seconds = 2;
-        OneTimeJob job = new OneTimeJob("jobType1", seconds);
-        job.setFuture(mock(Future.class));
-        given(jobDao.getJobById(job.getJobId())).willReturn(job);
+        Runnable runnable = () -> log.info("Test shouldCancelJob");
+        OneTimeJob oneTimeJob = OneTimeJob.builder()
+                .withJobType("jobType1")
+                .withTask(runnable)
+                .build();
+        oneTimeJob.setFuture(mock(Future.class));
+        given(jobDao.getJobById(oneTimeJob.getJobId())).willReturn(oneTimeJob);
 
-        jobExecutor.cancelJobById(job.getJobId());
-        assertEquals(State.CANCELLED, job.getState());
+        jobExecutor.cancelJobById(oneTimeJob.getJobId());
+        assertEquals(State.CANCELLED, oneTimeJob.getState());
 
-        then(jobDao).should(only()).getJobById(job.getJobId());
+        then(jobDao).should(only()).getJobById(oneTimeJob.getJobId());
     }
+
 }

@@ -22,15 +22,15 @@ public abstract class Job implements Runnable {
 
     private final String jobType;
 
-    private final Integer secondsToExecute;
+    private final Runnable task;
 
     @Setter
     private Future<?> future;
 
 
-    public Job(String jobType, Integer secondsToExecute) {
+    public Job(String jobType, Runnable task) {
         this.jobType = jobType;
-        this.secondsToExecute = secondsToExecute;
+        this.task = task;
     }
 
     @SneakyThrows
@@ -39,7 +39,7 @@ public abstract class Job implements Runnable {
         state = State.STARTED;
         log.info(this.toString());
         state = State.RUNNING;
-        Thread.sleep(TimeUnit.SECONDS.toMillis(secondsToExecute));
+        task.run();
         state = State.FINISHED;
         log.info(this.toString());
     }

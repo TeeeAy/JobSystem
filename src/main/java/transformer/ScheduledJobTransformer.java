@@ -8,7 +8,7 @@ public class ScheduledJobTransformer implements JobTransformer<ScheduledJobInfo,
     public ScheduledJob transform(ScheduledJobInfo jobInfo) {
         return ScheduledJob.builder()
                 .withJobType(jobInfo.getJobType())
-                .withSecondsToExecute(jobInfo.getSecondsToExecute())
+                .withTask(jobInfo.getTask())
                 .withRepetitionPeriod(jobInfo.getRepetitionPeriod())
                 .build();
     }

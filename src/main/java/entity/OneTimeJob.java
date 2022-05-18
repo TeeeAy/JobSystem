@@ -7,8 +7,8 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class OneTimeJob extends Job {
 
-    public OneTimeJob(String jobType, Integer secondsToExecute) {
-        super(jobType, secondsToExecute);
+    public OneTimeJob(String jobType, Runnable task) {
+        super(jobType, task);
     }
 
     @Override

@@ -8,7 +8,7 @@ public class OneTimeJobTransformer implements JobTransformer<OneTimeJobInfo, One
     public OneTimeJob transform(OneTimeJobInfo jobInfo) {
         return OneTimeJob.builder()
                 .withJobType(jobInfo.getJobType())
-                .withSecondsToExecute(jobInfo.getSecondsToExecute())
+                .withTask(jobInfo.getTask())
                 .build();
     }
 }

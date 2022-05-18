@@ -31,7 +31,7 @@ public class OneTimeJobExecutorTest {
         int seconds = 2;
         OneTimeJobInfo oneTimeJobInfo = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         Job job = jobExecutor.executeJob(oneTimeJobInfo);
         sleep(seconds / 2);
@@ -44,11 +44,11 @@ public class OneTimeJobExecutorTest {
         int seconds = 6;
         OneTimeJobInfo oneTimeJobInfo1 = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         OneTimeJobInfo oneTimeJobInfo2 = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         Job job1 = jobExecutor.executeJob(oneTimeJobInfo1);
         Job job2 = jobExecutor.executeJob(oneTimeJobInfo2);
@@ -63,7 +63,7 @@ public class OneTimeJobExecutorTest {
         int seconds = 4;
         OneTimeJobInfo oneTimeJobInfo = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         Job job = jobExecutor.executeJob(oneTimeJobInfo);
         sleep(seconds + seconds / 2);
@@ -82,15 +82,15 @@ public class OneTimeJobExecutorTest {
         int seconds = 6;
         OneTimeJobInfo oneTimeJobInfo1 = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         OneTimeJobInfo oneTimeJobInfo2 = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         OneTimeJobInfo waitingJobInfo = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         jobExecutor.executeJob(oneTimeJobInfo1);
         jobExecutor.executeJob(oneTimeJobInfo2);
@@ -107,7 +107,7 @@ public class OneTimeJobExecutorTest {
         int seconds = 2;
         OneTimeJobInfo oneTimeJobInfo = OneTimeJobInfo.builder()
                 .withJobType("jobType1")
-                .withSecondsToExecute(seconds)
+                .withTask(() -> sleep(seconds))
                 .build();
         Job scheduledJob = jobExecutor.executeJob(oneTimeJobInfo);
         sleep(seconds + seconds / 2);
@@ -123,8 +123,8 @@ public class OneTimeJobExecutorTest {
     private static void sleep(int seconds) {
         try {
             Thread.sleep(TimeUnit.SECONDS.toMillis(seconds));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
+
         }
     }
 }

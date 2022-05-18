@@ -3,10 +3,11 @@ import edu.umd.cs.mtc.TestFramework;
 import entity.Job;
 import entity.OneTimeJob;
 import entity.State;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
+@Slf4j
 public class JobTest extends MultithreadedTestCase {
 
     private Job job1;
@@ -17,9 +18,9 @@ public class JobTest extends MultithreadedTestCase {
 
     @Override
     public void initialize() {
-        job1 = new OneTimeJob("jobType1",1);
-        job2 = new OneTimeJob("jobType2", 0);
-        job3 = new OneTimeJob("jobType3", 2);
+        job1 = new OneTimeJob("jobType1",() -> log.info("job1"));
+        job2 = new OneTimeJob("jobType2", () -> log.info("job2"));
+        job3 = new OneTimeJob("jobType3", () -> log.info("job3"));
     }
 
     public void thread1() throws InterruptedException {
